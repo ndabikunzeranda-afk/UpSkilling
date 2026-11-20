@@ -1,0 +1,266 @@
+<?php
+/**
+ * Upskilling System - Dynamic Student Learning Dashboard & Course Platform (PHP)
+ * Full-viewport modern web application with database connectivity & standalone fallback
+ */
+
+require_once __DIR__ . '/php/config/database.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upskilling System - Student Learning Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-navbar">
+    <div class="nav-left">
+      <a href="#" id="nav-brand-logo" class="brand-link" title="Upskilling System Home">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
+            <path d="M22 10v6"></path>
+            <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
+          </svg>
+        </div>
+        <div class="brand-title-group">
+          <span class="brand-name">Upskilling System</span>
+          <span class="brand-badge">Learning Portal</span>
+        </div>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><button id="nav-btn-dashboard" class="nav-item-btn active">Dashboard</button></li>
+          <li><button id="nav-btn-courses" class="nav-item-btn">Courses</button></li>
+          <li><button id="nav-btn-bookmarks" class="nav-item-btn">Bookmarks</button></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="nav-right">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="text" id="global-search" class="search-input" placeholder="Search skills, modules..." aria-label="Search skills and modules">
+      </div>
+
+      <button id="btn-open-add-modal" class="btn-primary" title="Add a new learning module">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Add Module
+      </button>
+
+      <div class="user-badge" title="Active Student Session">
+        <div class="avatar-circle">ST</div>
+        <span class="user-name">Student</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Full-Screen Layout -->
+  <main class="app-main">
+
+    <!-- VIEW 1: Dashboard -->
+    <section id="dashboard-view" class="view-container active">
+      <div class="welcome-banner">
+        <div class="welcome-text-group">
+          <h1 class="welcome-title">Welcome to your learning space</h1>
+          <p class="welcome-subtitle">Develop your skills. Build your future.</p>
+          <div class="banner-stats">
+            <div class="stat-item"><span class="stat-dot"></span> 9 Skill Categories</div>
+            <div class="stat-item"><span class="stat-dot"></span> Interactive Modules</div>
+            <div class="stat-item"><span class="stat-dot"></span> Progress Saved Locally</div>
+          </div>
+        </div>
+        <div class="banner-actions">
+          <button id="btn-continue-learning" class="btn-primary">Continue Learning</button>
+        </div>
+      </div>
+
+      <div class="skills-section-header">
+        <div class="skills-heading-left">
+          <h2 class="skills-section-title">Explore your skills</h2>
+          <span id="skills-total-pill" class="skills-count-pill">9 Categories Available</span>
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab-btn active" data-filter="all">All</button>
+          <button class="filter-tab-btn" data-filter="career">Professional</button>
+          <button class="filter-tab-btn" data-filter="academic">Academic</button>
+          <button class="filter-tab-btn" data-filter="personal">Personal</button>
+        </div>
+      </div>
+
+      <div id="skills-grid" class="skills-grid">
+        <!-- Managed by script.js with data persistence -->
+      </div>
+    </section>
+
+    <!-- VIEW 2: Course & Modules Outline -->
+    <section id="course-view" class="view-container">
+      <div class="course-view-card">
+        <div class="view-nav-bar">
+          <button id="btn-back-to-dashboard" class="nav-back-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Back to Dashboard
+          </button>
+          <span id="course-modules-counter" class="skills-count-pill">5 Modules</span>
+        </div>
+
+        <div class="course-header-banner">
+          <div id="course-header-icon" class="course-header-icon"></div>
+          <div class="course-header-text">
+            <h2 id="course-title" class="course-title">Communication Skills</h2>
+            <p id="course-subtitle" class="course-subtitle">Example course structure</p>
+          </div>
+        </div>
+
+        <div id="modules-list" class="modules-list"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: Interactive Lesson Reader -->
+    <section id="lesson-view" class="view-container">
+      <div class="view-nav-bar" style="margin-bottom: 16px;">
+        <button id="btn-back-to-course" class="nav-back-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Back to Course Modules
+        </button>
+        <div id="reader-quick-status" class="skills-count-pill">Module Active</div>
+      </div>
+
+      <div class="reader-container">
+        <aside class="reader-sidebar">
+          <h3 class="sidebar-title">Course Outline</h3>
+          <ul id="sidebar-module-list" class="sidebar-module-list"></ul>
+        </aside>
+
+        <div class="reader-content-card">
+          <div class="reader-header">
+            <div class="reader-brand-group">
+              <svg class="reader-brand-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
+                <path d="M22 10v6"></path>
+                <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
+              </svg>
+              <div class="reader-title-area">
+                <span id="lesson-brand-title" class="reader-course-name">Upskilling System</span>
+                <span id="lesson-brand-crumb" class="reader-breadcrumbs">My Learning / Communication Skills</span>
+              </div>
+            </div>
+            <button id="lesson-bookmark-btn" class="bookmark-toggle-btn" title="Bookmark this lesson">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+              <span>Bookmark</span>
+            </button>
+          </div>
+
+          <div class="reader-meta-bar">
+            <span id="lesson-counter" class="reader-module-tag">MODULE 2 OF 5</span>
+            <span class="card-status-pill in-progress active">In progress</span>
+          </div>
+
+          <h3 id="lesson-main-title" class="reader-lesson-title">Verbal Communication</h3>
+
+          <div class="reader-progress-bar-track">
+            <div id="lesson-progress-fill" class="reader-progress-bar-fill"></div>
+          </div>
+
+          <div class="key-idea-card">
+            <div class="key-idea-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+              <span>Today's key idea</span>
+            </div>
+            <p id="lesson-key-idea-text" class="key-idea-content">
+              Effective communication is not only about speaking. It also involves organizing your ideas and understanding your audience.
+            </p>
+            <span class="key-idea-sub">Illustrative lesson content</span>
+          </div>
+
+          <nav class="reader-tabs" aria-label="Lesson Sections">
+            <button class="tab-pill-btn active" data-tab="learn">Learn</button>
+            <button class="tab-pill-btn" data-tab="example">Example</button>
+            <button class="tab-pill-btn" data-tab="practice">Practice</button>
+          </nav>
+
+          <div id="tab-learn" class="tab-content-panel active"></div>
+          <div id="tab-example" class="tab-content-panel"></div>
+          <div id="tab-practice" class="tab-content-panel"></div>
+
+          <div class="reader-footer">
+            <button id="btn-prev-lesson" class="btn-ctrl btn-ctrl-prev">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Previous
+            </button>
+            <button id="btn-mark-complete" class="btn-secondary">Mark Completed</button>
+            <button id="btn-next-lesson" class="btn-ctrl btn-ctrl-next">
+              Next Module
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Real Website Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 Upskilling System. Student Learning & Competency Dashboard.</p>
+      <ul class="footer-links">
+        <li><a href="#" class="footer-link">Dashboard</a></li>
+        <li><a href="#" class="footer-link">Learning Journey</a></li>
+        <li><a href="#" class="footer-link">Privacy & Ethics</a></li>
+        <li><a href="#" class="footer-link">Documentation</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Extensibility Modal -->
+  <div id="add-modal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Learning Module</h3>
+        <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <form id="add-module-form">
+        <div class="form-group">
+          <label for="new-module-skill">Skill Category</label>
+          <select id="new-module-skill" required>
+            <option value="personal-branding">Personal Branding</option>
+            <option value="networking-skills">Networking Skills</option>
+            <option value="academic-success">Academic Success</option>
+            <option value="professional-conduct">Professional Conduct</option>
+            <option value="communication" selected>Communication</option>
+            <option value="digital-learning">Digital Learning</option>
+            <option value="action-planning">Action Planning</option>
+            <option value="research-skills">Research Skills</option>
+            <option value="personal-goals">Personal Goals</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="new-module-title">Module Title</label>
+          <input type="text" id="new-module-title" placeholder="e.g. Active Listening in High-Stakes Meetings" required>
+        </div>
+        <div class="form-group">
+          <label for="new-module-summary">Short Summary</label>
+          <input type="text" id="new-module-summary" placeholder="e.g. Master feedback techniques and non-verbal cues.">
+        </div>
+        <div class="form-group">
+          <label for="new-module-keyidea">Today's Key Idea</label>
+          <textarea id="new-module-keyidea" rows="2" placeholder="e.g. Listening is an active skill that requires focused presence."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btn-cancel-modal" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">Add Module</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
